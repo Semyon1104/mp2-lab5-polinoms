@@ -43,75 +43,121 @@ public:
 template <class T>
 TList<T>::TList()
 {
-
+	pFirst = nullptr;
+	pCurrent = nullptr;
+	pPrevious = nullptr;
+	pLast = nullptr;
+	pStop = nullptr;
+	length = 0;
 }
 
 template <class T>
 TList<T>::~TList()
 {
-
+	Reset();
+	delete pStop;
 }
 
 template <class T>
 bool TList<T>::IsEmpty()
 {
-	return false;
+	return length == 0;
 }
 
 template <class T>
 void TList<T>::InsertFirst(T item)
 {
-
+	pFirst = new TNode<T>(item, pFirst);
+	length++;
+	if (length == 1)
+		pLast = pCurrent = pFirst;
 }
 
 template <class T>
 void TList<T>::InsertLast(T item)
 {
-
+	if (pCurrent == pStop)
+		return InsertFirst(item);
+	pLast->pNext = new TNode<T>(item, pStop);
+	pLast = pLast->pNext;
+	length++;
 }
 
 template <class T>
 void TList<T>::InsertCurrent(T item)
 {
-	
+	if (pCurrent == pFirst)
+		return InsertFirst(item);
+	pPrevious->pNext = new TNode<T>(item, pCurrent);
+	pCurrent = pPrevious->pNext;
+	length++;
+
 }
 
 template <class T>
 void TList<T>::DeleteFirst()
 {
-
+	if (IsEmpty())
+		return;
+	TNode<T>* temp = pFirst;
+	pFirst = pFirst->pNext;
+	delete temp;
+	length--;
+	if (length == 0)
+		pLast = pCurrent = pPrevious = pFirst = pStop;
+	else if (pCurrent == temp)
+		pCurrent = pFirst;
 }
 
 template <class T>
 void TList<T>::DeleteCurrent()
 {
-	
+	if (pCurrent == pStop)
+		return;
+	if (pCurrent == pFirst)
+		return DeleteFirst();
+	pPrevious->pNext = pCurrent->pNext;
+	delete pCurrent;
+	pCurrent = pPrevious->pNext;
+	length--;
+	if (length == 0)
+		pLast = pCurrent = pPrevious = pFirst = pStop;
 }
 
 template <class T>
 T TList<T>::GetCurrentItem()
 {
 	if (pCurrent == pStop)
-		throw " ";
+		throw "Error";
 	return pCurrent->value;
 }
 
 template <class T>
 void TList<T>::Reset()
 {
-
+	while (!IsEmpty())
+		DeleteFirst();
 }
 
 template <class T>
-void TList<T>::GoNext()
-{
+void TList<T>::GoNext() {
+	if (pCurrent != pStop)
+		pPrevious = pCurrent;
 
+	if (pCurrent != pLast) {
+		pCurrent = pCurrent->pNext;
+	}
+	else {
+		pCurrent = pStop;
+	}
 }
+
+
 
 template <class T>
 bool TList<T>::IsEnd()
 {
-	return false;
+	return pCurrent == pStop;
 }
 
 
